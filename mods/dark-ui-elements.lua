@@ -119,6 +119,9 @@ local function AddSpecialBackground(frame, w, h, x, y)
 end
 
 local function DarkenFrame(frame, r, g, b, a)
+  -- dont't do anything if disabled
+  if not ShaguTweaks.DarkMode then return end
+
   -- set defaults
   if not r and not g and not b then
     r, g, b, a = module.color.r, module.color.g, module.color.b, module.color.a
@@ -167,7 +170,12 @@ local function DarkenFrame(frame, r, g, b, a)
   end
 end
 
+-- register darken frame to global
+ShaguTweaks.DarkenFrame = DarkenFrame
+
 module.enable = function(self)
+  ShaguTweaks.DarkMode = true
+
   local name, original, r, g, b
   local hookBuffButton_Update = BuffButton_Update
   function BuffButton_Update(buttonName, index, filter)
@@ -201,8 +209,6 @@ module.enable = function(self)
   DarkenFrame(DropDownList1)
   DarkenFrame(DropDownList2)
   DarkenFrame(DropDownList3)
-
-  ShaguTweaks.DarkMode = true
 
   for _, button in pairs({ MinimapZoomOut, MinimapZoomIn }) do
     for _, func in pairs({ "GetNormalTexture", "GetDisabledTexture", "GetPushedTexture" }) do

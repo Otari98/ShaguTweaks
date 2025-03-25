@@ -10,6 +10,47 @@ local module = ShaguTweaks:register({
 })
 
 module.enable = function(self)
+  local function AddHeader(tooltip)
+    local name = tooltip:GetName()
+    local sides = { "Left", "Right" }
+
+    -- shift all entries one line down
+    for i=tooltip:NumLines(), 1, -1 do
+      for _, side in pairs(sides) do
+        local current = _G[name.."Text"..side..i]
+        local below = _G[name.."Text"..side..i+1]
+
+        if current and current:IsShown() then
+          local text = current:GetText()
+          local r, g, b, a = current:GetTextColor()
+
+          if text and text ~= "" then
+            if tooltip:NumLines() < i+1 then
+              -- add new line if required
+              tooltip:AddLine(text, r, g, b, a)
+            else
+              -- update existing lines
+              below:SetText(text)
+              below:SetTextColor(r, g, b, a)
+              below:Show()
+
+              -- hide processed line
+              current:Hide()
+            end
+          end
+        end
+      end
+    end
+
+    -- add label to first line
+    _G[name.."TextLeft1"]:SetTextColor(.5, .5, .5, 1)
+    _G[name.."TextLeft1"]:SetText(CURRENTLY_EQUIPPED)
+    _G[name.."TextLeft1"]:Show()
+
+    -- update tooltip sizes
+    tooltip:Show()
+  end
+
   local itemtypes = {
     ["deDE"] = {
       ["INVTYPE_WAND"] = "Zauberstab",
@@ -64,9 +105,9 @@ module.enable = function(self)
 
   -- set globals for all inventory types
   for key, value in pairs(itemtypes[GetLocale()]) do setglobal(key, value) end
-  INVTYPE_WEAPON_OTHER = INVTYPE_WEAPON.."_other";
-  INVTYPE_FINGER_OTHER = INVTYPE_FINGER.."_other";
-  INVTYPE_TRINKET_OTHER = INVTYPE_TRINKET.."_other";
+  INVTYPE_WEAPON_OTHER = INVTYPE_WEAPON.."_other"
+  INVTYPE_FINGER_OTHER = INVTYPE_FINGER.."_other"
+  INVTYPE_TRINKET_OTHER = INVTYPE_TRINKET.."_other"
 
   local slots = {
     [INVTYPE_2HWEAPON] = "MainHandSlot",
@@ -102,13 +143,8 @@ module.enable = function(self)
     [INVTYPE_THROWN] = "RangedSlot",
   }
 
-  ShoppingTooltip1:SetClampedToScreen(1)
-  ShoppingTooltip1TextLeft1:SetFontObject(GameFontNormal)
-  ShoppingTooltip1TextLeft2:SetFontObject(GameFontHighlightSmall)
-
-  ShoppingTooltip2:SetClampedToScreen(1)
-  ShoppingTooltip2TextLeft1:SetFontObject(GameFontNormal)
-  ShoppingTooltip2TextLeft2:SetFontObject(GameFontHighlightSmall)
+  ShoppingTooltip1:SetClampedToScreen(true)
+  ShoppingTooltip2:SetClampedToScreen(true)
 
   local function ShowCompare(tooltip)
     -- abort if shift is not pressed
@@ -138,11 +174,12 @@ module.enable = function(self)
           end
 
           -- first tooltip
-          ShoppingTooltip1:SetOwner(tooltip, "ANCHOR_NONE");
-          ShoppingTooltip1:ClearAllPoints();
-          ShoppingTooltip1:SetPoint(anchor, tooltip, relative, 0, 0);
+          ShoppingTooltip1:SetOwner(tooltip, "ANCHOR_NONE")
+          ShoppingTooltip1:ClearAllPoints()
+          ShoppingTooltip1:SetPoint(anchor, tooltip, relative, 0, 0)
           ShoppingTooltip1:SetInventoryItem("player", slotID)
           ShoppingTooltip1:Show()
+          AddHeader(ShoppingTooltip1)
 
           -- second tooltip
           if slots[slotType .. "_other"] then
@@ -155,7 +192,8 @@ module.enable = function(self)
                 ShoppingTooltip2:SetPoint(anchor, tooltip, relative, 0, 0);
             end
             ShoppingTooltip2:SetInventoryItem("player", slotID_other)
-            ShoppingTooltip2:Show();
+            ShoppingTooltip2:Show()
+            AddHeader(ShoppingTooltip2)
           end
         end
       end
