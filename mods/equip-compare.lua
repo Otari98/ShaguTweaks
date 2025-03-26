@@ -154,11 +154,11 @@ module.enable = function(self)
       return
     end
 
-    for i=1,tooltip:NumLines() do
+    for i=2,5 do
       local tmpText = _G[tooltip:GetName() .. "TextLeft"..i]
 
       for slotType, slotName in pairs(slots) do
-        if tmpText:GetText() == slotType then
+        if strfind(tmpText:GetText() or "", slotType, 1, true) then
           local slotID = GetInventorySlotInfo(slotName)
 
           -- determine screen part
