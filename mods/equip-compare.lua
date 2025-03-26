@@ -145,6 +145,10 @@ module.enable = function(self)
 
   ShoppingTooltip1:SetClampedToScreen(true)
   ShoppingTooltip2:SetClampedToScreen(true)
+  ShoppingTooltip1TextLeft1:SetFontObject(GameFontNormal)
+  ShoppingTooltip1TextLeft2:SetFontObject(GameFontHighlightSmall)
+  ShoppingTooltip2TextLeft1:SetFontObject(GameFontNormal)
+  ShoppingTooltip2TextLeft2:SetFontObject(GameFontHighlightSmall)
 
   local function ShowCompare(tooltip)
     -- abort if shift is not pressed
@@ -179,7 +183,7 @@ module.enable = function(self)
           ShoppingTooltip1:SetPoint(anchor, tooltip, relative, 0, 0)
           ShoppingTooltip1:SetInventoryItem("player", slotID)
           ShoppingTooltip1:Show()
-          AddHeader(ShoppingTooltip1)
+        --   AddHeader(ShoppingTooltip1)
 
           -- second tooltip
           if slots[slotType .. "_other"] then
@@ -193,7 +197,7 @@ module.enable = function(self)
             end
             ShoppingTooltip2:SetInventoryItem("player", slotID_other)
             ShoppingTooltip2:Show()
-            AddHeader(ShoppingTooltip2)
+            -- AddHeader(ShoppingTooltip2)
           end
         end
       end
