@@ -159,6 +159,16 @@ module.enable = function()
     end
   end
 
+  local wrapping_lines = {
+    ["^Set:"] = gsub("^"..ITEM_SET_BONUS, " %%s", ""),
+    ["^%(%d%) Set:"] = gsub(gsub(ITEM_SET_BONUS_GRAY, "%(%%d%)", "^%%(%%d%%)"), " %%s", ""),
+    ["^Effect:"] = gsub("^"..ITEM_SPELL_EFFECT, " %%s", ""),
+    ["^Equip:"] = "^"..ITEM_SPELL_TRIGGER_ONEQUIP,
+    ["^Chance on hit:"] = "^"..ITEM_SPELL_TRIGGER_ONPROC,
+    ["^Use:"] = "^"..ITEM_SPELL_TRIGGER_ONUSE,
+    ["^\nRequires"] = "^\n"..gsub(ITEM_REQ_SKILL, " %%s", "")
+  }
+
   -- tooltip data cache
   local lines = {}
   for i = 1, 30 do lines[i] = {} end
@@ -171,7 +181,7 @@ module.enable = function()
       for j in pairs(lines[i]) do lines[i][j] = nil end
     end
 
-    -- stored current tooltip data
+    -- store current tooltip data
     for i = 1, tooltip:NumLines() do
       local left = _G[name.."TextLeft"..i]
       local right =  _G[name.."TextRight"..i]
@@ -197,9 +207,18 @@ module.enable = function()
       if data[2] then
         tooltip:AddDoubleLine(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8])
       else
-        -- set pieces do not wrap apparently
-        local wrap = true
-        if string.sub(data[1] or "", 1, 1) == " " then wrap = false end
+        local wrap = false
+        -- flavor text is wrapped
+        if strsub(data[1] or "", 1, 1) == "\"" then
+          wrap = true
+        else
+          for _, pattern in pairs(wrapping_lines) do
+            if strfind(data[1] or "", pattern) then
+              wrap = true
+              break
+            end
+          end
+        end
         tooltip:AddLine(data[1], data[3], data[4], data[5], wrap)
       end
     end
