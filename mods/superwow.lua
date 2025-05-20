@@ -21,7 +21,10 @@ local module = ShaguTweaks:register({
 module.enable = function(self)
   local libcast = ShaguTweaks.libcast
 
-  local unitcast = CreateFrame("Frame")
+  -- write state variable
+  ShaguTweaks.superwow_active = true
+
+  local unitcast = CreateFrame("Frame", "ShaguTweaksSuperwowCast")
   unitcast:RegisterEvent("UNIT_CASTEVENT")
   unitcast:SetScript("OnEvent", function()
     if arg3 == "START" or arg3 == "CAST" or arg3 == "CHANNEL" then
@@ -52,8 +55,6 @@ module.enable = function(self)
       libcast.db[guid].icon = icon
       libcast.db[guid].channel = event_type == "CHANNEL" or false
 
-      -- write state variable
-      ShaguTweaks.superwow_active = true
     elseif arg3 == "FAIL" then
       local guid = arg1
 

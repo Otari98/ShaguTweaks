@@ -166,6 +166,8 @@ libcast:RegisterEvent("SPELLCAST_CHANNEL_STOP")
 libcast:RegisterEvent("SPELLCAST_CHANNEL_UPDATE")
 
 libcast:SetScript("OnEvent", function()
+  if ShaguTweaks.superwow_active then return end
+
   -- Fill database with player casts
   if event == "SPELLCAST_START" then
     local icon = L["spells"][arg1] and L["spells"][arg1].icon and string.format("%s%s", "Interface\\Icons\\", L["spells"][arg1].icon) or lastcasttex
