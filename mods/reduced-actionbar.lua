@@ -103,8 +103,8 @@ module.enable = function(self)
   MainMenuBarTexture1:SetPoint("RIGHT", MainMenuBarArtFrame, "RIGHT")
 
   -- move gryphon textures
-  MainMenuBarLeftEndCap:SetPoint("RIGHT", MainMenuBarArtFrame, "LEFT", 30, 0)
-  MainMenuBarRightEndCap:SetPoint("LEFT", MainMenuBarArtFrame, "RIGHT", -30, 0)
+  MainMenuBarLeftEndCap:SetPoint("RIGHT", MainMenuBarArtFrame, "LEFT", 29.5, 0)
+  MainMenuBarRightEndCap:SetPoint("LEFT", MainMenuBarArtFrame, "RIGHT", -31.5, 0)
 
   -- move MultiBarBottomRight ontop of MultiBarBottomLeft
   MultiBarBottomRight:ClearAllPoints()
@@ -120,9 +120,9 @@ module.enable = function(self)
     MultiBarBottomLeft:ClearAllPoints()
     if MainMenuExpBar:IsVisible() or ReputationWatchBar:IsVisible() then
       local anchor = GetWatchedFactionInfo() and ReputationWatchBar or MainMenuExpBar
-      MultiBarBottomLeft:SetPoint("BOTTOM", anchor, "TOP", 0, 3)
+      MultiBarBottomLeft:SetPoint("BOTTOM", anchor, "TOP", 2, 3)
     else
-      MultiBarBottomLeft:SetPoint("BOTTOM", MainMenuBar, "TOP", 0, -3)
+      MultiBarBottomLeft:SetPoint("BOTTOM", MainMenuBar, "TOP", 2, -3)
     end
 
     -- move pet actionbar above other actionbars
