@@ -136,8 +136,8 @@ module.enable = function()
 
     function tooltip.SetAuctionItem(self, atype, index)
       original_SetAuctionItem(self, atype, index)
-      local itemName = GetAuctionItemInfo(atype, index)
-      self.itemID = GetItemIDByName(itemName)
+	  local _, _, id = strfind(GetAuctionItemLink(atype, index) or "", "item:(%d+)")
+      self.itemID = tonumber(id)
     end
 
     function tooltip.SetAuctionSellItem(self)
@@ -203,7 +203,7 @@ module.enable = function()
     -- add "Currently Equipped" header
     tooltip:SetText(CURRENTLY_EQUIPPED, .5, .5, .5, 1, false)
     for _, data in ipairs(lines) do
-      -- add the rest 
+      -- add the rest
       if data[2] then
         tooltip:AddDoubleLine(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8])
       else
