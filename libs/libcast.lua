@@ -383,7 +383,7 @@ hooksecurefunc("CastSpell", function(id, bookType)
     local spellName = GetSpellName(id, bookType)
     CastCustom(spellName)
   end
-end, true)
+end)
 
 hooksecurefunc("CastSpellByName", function(spell, target)
   _, lastrank = libspell.GetSpellInfo(spell)
@@ -395,7 +395,7 @@ hooksecurefunc("CastSpellByName", function(spell, target)
       return
     end
   end
-end, true)
+end)
 
 hooksecurefunc("UseAction", function(slot, target, button)
   scanner:SetAction(slot)
@@ -406,6 +406,6 @@ hooksecurefunc("UseAction", function(slot, target, button)
 
   if GetActionText(slot) or not IsCurrentAction(slot) then return end
   CastCustom(spellName)
-end, true)
+end)
 
 ShaguTweaks.libcast = libcast

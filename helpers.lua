@@ -62,20 +62,6 @@ ShaguTweaks.GetColorGradient = function(perc)
     gradientcolors[index].h
 end
 
-ShaguTweaks.GetExpansion = function()
-  local _, _, _, client = GetBuildInfo()
-  client = client or 11200
-
-  -- detect client expansion
-  if client >= 20000 and client <= 20400 then
-    return "tbc"
-  elseif client >= 30000 and client <= 30300 then
-    return "wotlk"
-  else
-    return "vanilla"
-  end
-end
-
 ShaguTweaks.HookScript = function(f, script, func)
   local prev = f:GetScript(script)
   f:SetScript(script, function(a1,a2,a3,a4,a5,a6,a7,a8,a9)
@@ -99,26 +85,31 @@ ShaguTweaks.HookAddonOrVariable = function(addon, func)
 end
 
 local hooks = {}
-ShaguTweaks.hooksecurefunc = function(name, func, append)
-  if not _G[name] then return end
+ShaguTweaks.hooksecurefunc = function(tbl, name, func, prepend)
+  if type(tbl) == "string" then
+    prepend, func, name, tbl = func, name, tbl, _G
+  end
+
+  if not tbl or not tbl[name] then return end
 
   hooks[tostring(func)] = {}
-  hooks[tostring(func)]["old"] = _G[name]
+  hooks[tostring(func)]["old"] = tbl[name]
   hooks[tostring(func)]["new"] = func
 
-  if append then
-    hooks[tostring(func)]["function"] = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
-      hooks[tostring(func)]["old"](a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
-      hooks[tostring(func)]["new"](a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+  if prepend then
+    hooks[tostring(func)]["function"] = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16)
+      hooks[tostring(func)]["new"](a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16)
+      return hooks[tostring(func)]["old"](a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16)
     end
   else
-    hooks[tostring(func)]["function"] = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
-      hooks[tostring(func)]["new"](a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
-      hooks[tostring(func)]["old"](a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+    hooks[tostring(func)]["function"] = function(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16)
+      local r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16 = hooks[tostring(func)]["old"](a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16)
+      hooks[tostring(func)]["new"](a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16)
+      return r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16
     end
   end
 
-  _G[name] = hooks[tostring(func)]["function"]
+  tbl[name] = hooks[tostring(func)]["function"]
 end
 
 local sanitize_cache = {}
@@ -306,19 +297,18 @@ ShaguTweaks.TimeConvert = function(remaining)
 end
 
 -- http://lua-users.org/wiki/SortedIteration
-local function __genOrderedIndex( t )
+local function __genOrderedIndex(t, sortFunc)
   local orderedIndex = {}
   for key in pairs(t) do
     table.insert( orderedIndex, key )
   end
-  table.sort( orderedIndex )
+  table.sort(orderedIndex, sortFunc)
   return orderedIndex
 end
 
 local function orderedNext(t, state)
   local key = nil
   if state == nil then
-    t.__orderedIndex = __genOrderedIndex( t )
     key = t.__orderedIndex[1]
   else
     for i = 1,table.getn(t.__orderedIndex) do
@@ -336,9 +326,24 @@ local function orderedNext(t, state)
   return
 end
 
-ShaguTweaks.spairs = function(t)
+ShaguTweaks.spairs = function(t, sortFunc)
+  t.__orderedIndex = __genOrderedIndex(t, sortFunc)
   return orderedNext, t, nil
 end
+
+ShaguTweaks.GetItemIDFromLink = function(itemLink)
+  if not itemLink then
+    return
+  end
+
+  local foundID, _ , itemID = string.find(itemLink, "item:(%d+)")
+  if not foundID then
+    return
+  end
+
+  return tonumber(itemID)
+end
+
 
 ShaguTweaks.GetItemCount = function(itemName)
   local count = 0
@@ -347,8 +352,8 @@ ShaguTweaks.GetItemCount = function(itemName)
       local _, itemCount = GetContainerItemInfo(bag, slot)
       if itemCount then
         local itemLink = GetContainerItemLink(bag,slot)
-        local _, _, itemParse = strfind(itemLink, "(%d+):")
-        local queryName = GetItemInfo(itemParse)
+        local itemID = ShaguTweaks.GetItemIDFromLink(itemLink)
+        local queryName = GetItemInfo(itemID)
         if queryName and queryName ~= "" then
           if queryName == itemName then
             count = count + itemCount
@@ -359,4 +364,21 @@ ShaguTweaks.GetItemCount = function(itemName)
   end
 
   return count
+end
+
+local itemLinkByNameCache = {}
+ShaguTweaks.GetItemLinkByName = function(name)
+  if itemLinkByNameCache[name] then
+    return itemLinkByNameCache[name]
+  end
+
+  for itemID = 1, 25818 do
+    local itemName, itemLink, itemQuality = GetItemInfo(itemID)
+    if (itemName and itemName == name) then
+      local _, _, _, hex = GetItemQualityColor(tonumber(itemQuality))
+      local hyperLink = hex.. "|H".. itemLink .."|h["..itemName.."]|h" .. FONT_COLOR_CODE_CLOSE
+      itemLinkByNameCache[name] = hyperLink
+      return hyperLink
+    end
+  end
 end

@@ -21,7 +21,16 @@ local module = ShaguTweaks:register({
 module.enable = function(self)
   do -- add class colors to chat
     for i=1,NUM_CHAT_WINDOWS do
-      if _G["ChatFrame"..i] and not _G["ChatFrame"..i].HookAddMessageColor and not Prat then
+      local isCombat = 0
+      if _G["ChatFrame"..i] and _G["ChatFrame"..i].messageTypeList then
+        for _, msg in pairs(_G["ChatFrame"..i].messageTypeList) do
+          if strfind(msg, "SPELL", 1) or strfind(msg, "COMBAT", 1) then
+            isCombat = isCombat + 1
+          end
+        end
+      end
+
+      if _G["ChatFrame"..i] and not _G["ChatFrame"..i].HookAddMessageColor and not Prat and isCombat < 5 then
         _G["ChatFrame"..i].HookAddMessageColor = _G["ChatFrame"..i].AddMessage
         _G["ChatFrame"..i].AddMessage = function(frame, text, a1, a2, a3, a4, a5)
           if text then
@@ -110,7 +119,7 @@ module.enable = function(self)
           end
         end
       end
-    end, true)
+    end)
   end
 
   do -- add colors to friend list
@@ -168,7 +177,7 @@ module.enable = function(self)
           friendInfo:SetVertexColor(1,1,1,.4)
         end
       end
-    end, true)
+    end)
   end
 
   do -- add colors to who list
@@ -226,6 +235,6 @@ module.enable = function(self)
         local color = GetDifficultyColor(level)
         _G["WhoFrameButton"..i.."Level"]:SetTextColor(color.r, color.g, color.b)
       end
-    end, true)
+    end)
   end
 end

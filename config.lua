@@ -123,7 +123,13 @@ settings.load = function(self)
   local entrysize = 22
   local previous = nil
 
-  for category, entries in ShaguTweaks.spairs(gui) do
+  local sortGeneralFirst = function(a, b)
+    if a == T["General"] then return true end
+    if b == T["General"] then return false end
+    return a < b
+  end
+
+  for category, entries in ShaguTweaks.spairs(gui, sortGeneralFirst) do
     local entry, spacing = 1, 22
     local height = 0
 

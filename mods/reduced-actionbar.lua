@@ -1,11 +1,11 @@
 local _G = ShaguTweaks.GetGlobalEnv()
 local T = ShaguTweaks.T
+local hooksecurefunc = hooksecurefunc or ShaguTweaks.hooksecurefunc
 
 local module = ShaguTweaks:register({
   title = T["Reduced Actionbar Size"],
   description = T["Reduces the actionbar size by removing several items such as the bag panel and microbar"],
   expansions = { ["vanilla"] = true, ["tbc"] = nil },
-  categpry = nil,
   enabled = nil,
 })
 
@@ -70,6 +70,9 @@ module.enable = function(self)
     ShapeshiftButton1, ShapeshiftButton2,
     ShapeshiftButton3, ShapeshiftButton4,
     ShapeshiftButton5, ShapeshiftButton6,
+    ShapeshiftButton7, ShapeshiftButton8,
+    ShapeshiftButton9, ShapeshiftButton10,
+    ShapeshiftButton11, ShapeshiftButton12,
   }
 
   -- elements that shall be resized to 511px
@@ -130,7 +133,8 @@ module.enable = function(self)
     local anchor = MainMenuBarArtFrame
     anchor = MultiBarBottomLeft:IsVisible() and MultiBarBottomLeft or anchor
     anchor = MultiBarBottomRight:IsVisible() and MultiBarBottomRight or anchor
-    PetActionBarFrame:SetPoint("BOTTOM", anchor, "TOP", 0, 3)
+    anchor = ShapeshiftBarFrame:IsVisible() and ShapeshiftBarFrame or anchor
+    PetActionBarFrame:SetPoint("BOTTOMLEFT", anchor, "TOPLEFT", 20, 4)
 
     -- ShapeshiftBarFrame
     ShapeshiftBarFrame:ClearAllPoints()
@@ -140,8 +144,8 @@ module.enable = function(self)
     anchor = MultiBarBottomRight:IsVisible() and MultiBarBottomRight or anchor
 
     offset = anchor == ActionButton1 and ( MainMenuExpBar:IsVisible() or ReputationWatchBar:IsVisible() ) and 6 or 0
-    offset = anchor == ActionButton1 and offset + 6 or offset
-    ShapeshiftBarFrame:SetPoint("BOTTOMLEFT", anchor, "TOPLEFT", 8, 2 + offset)
+    offset = anchor == ActionButton1 and offset + 4 or offset
+    ShapeshiftBarFrame:SetPoint("BOTTOMLEFT", anchor, "TOPLEFT", 8, 4 + offset)
 
     -- move castbar ontop of other bars
     local anchor = MainMenuBarArtFrame
@@ -154,8 +158,11 @@ module.enable = function(self)
 
   -- restore frame positions when UIParent becomes visible
   local restore = CreateFrame("Frame", nil, UIParent)
-  restore:SetScript("OnShow", function()
-    UIParent_ManageFramePositions()
+  restore:SetScript("OnShow", UIParent_ManageFramePositions)
+
+  -- enforce pet actionbar offset after pet actionbar becomes visible
+  hooksecurefunc("ShowPetActionBar", function()
+    PETACTIONBAR_XPOS = 36
   end)
 
   -- enable picking up/replacing bags by clicking on the container frame portrait

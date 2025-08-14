@@ -1,6 +1,8 @@
 local _G = ShaguTweaks.GetGlobalEnv()
 local T = ShaguTweaks.T
 local GetExpansion = ShaguTweaks.GetExpansion
+local GetItemLinkByName = ShaguTweaks.GetItemLinkByName
+local GetItemIDFromLink = ShaguTweaks.GetItemIDFromLink
 
 local module = ShaguTweaks:register({
   title = T["Vendor Values"],
@@ -3868,16 +3870,6 @@ end
 
 ShaguTweaks.SellValueDB = data
 
-local function GetItemLinkByName(name)
-  for itemID = 1, 25818 do
-    local itemName, hyperLink, itemQuality = GetItemInfo(itemID)
-    if (itemName and itemName == name) then
-      local _, _, _, hex = GetItemQualityColor(tonumber(itemQuality))
-      return hex.. "|H"..hyperLink.."|h["..itemName.."]|h|r"
-    end
-  end
-end
-
 local function AddVendorPrices(frame, id, count)
   if ShaguTweaks.SellValueDB[id] and ShaguTweaks.SellValueDB[id] > 0 then
     SetTooltipMoney(frame, ShaguTweaks.SellValueDB[id] * count)
@@ -3896,18 +3888,18 @@ module.enable = function(self)
 
   tooltip:SetScript("OnShow", function()
     if GameTooltip.itemLink and (GameTooltip.ignoreMerchant or not MerchantFrame:IsShown()) then
-      local _, _, id = string.find(GameTooltip.itemLink, "item:(%d+):%d+:%d+:%d+")
+      local itemID = GetItemIDFromLink(GameTooltip.itemLink)
       local count = tonumber(GameTooltip.itemCount) or 1
-      AddVendorPrices(GameTooltip, tonumber(id), math.max(count, 1))
+      AddVendorPrices(GameTooltip, itemID, math.max(count, 1))
     end
   end)
 
   local HookSetItemRef = SetItemRef
   SetItemRef = function(link, text, button)
-    local item, _, id = string.find(link, "item:(%d+):.*")
+    local itemID = GetItemIDFromLink(GameTooltip.itemLink)
     HookSetItemRef(link, text, button)
-    if not IsAltKeyDown() and not IsShiftKeyDown() and not IsControlKeyDown() and item then
-      AddVendorPrices(ItemRefTooltip, tonumber(id), 1)
+    if not IsAltKeyDown() and not IsShiftKeyDown() and not IsControlKeyDown() and itemID then
+      AddVendorPrices(ItemRefTooltip, itemID, 1)
     end
   end
 
@@ -3997,7 +3989,7 @@ module.enable = function(self)
 
   local HookSetAuctionItem = GameTooltip.SetAuctionItem
   function GameTooltip.SetAuctionItem(self, atype, index)
-    _, GameTooltip.itemCount = GetAuctionItemInfo(atype, index)
+    _, _, GameTooltip.itemCount = GetAuctionItemInfo(atype, index)
     GameTooltip.itemLink = GetAuctionItemLink(atype, index)
     GameTooltip.ignoreMerchant = true
     return HookSetAuctionItem(self, atype, index)
@@ -4005,8 +3997,9 @@ module.enable = function(self)
 
   local HookSetAuctionSellItem = GameTooltip.SetAuctionSellItem
   function GameTooltip.SetAuctionSellItem(self)
-    _, GameTooltip.itemCount = GetAuctionSellItemInfo()
-    GameTooltip.itemLink = GetAuctionSellItemLink()
+    local itemName, _, itemCount = GetAuctionSellItemInfo()
+    GameTooltip.itemCount = itemCount
+    GameTooltip.itemLink = GetItemLinkByName(itemName)
     GameTooltip.ignoreMerchant = true
     return HookSetAuctionSellItem(self)
   end
