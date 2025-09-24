@@ -103,19 +103,15 @@ module.enable = function(self)
           end
 
           if zone and zone == playerzone then
-            if online then
-              _G["GuildFrameButton"..i.."Zone"]:SetTextColor(.5, 1, 1, 1)
-            else
-              _G["GuildFrameButton"..i.."Zone"]:SetTextColor(.5, 1, 1, .5)
-            end
+            _G["GuildFrameButton"..i.."Zone"]:SetTextColor(.5, 1, 1, online and 1 or 0.5)
+          else
+            _G["GuildFrameButton"..i.."Zone"]:SetTextColor(1, 1, 1, online and 1 or 0.5)
           end
 
           if rankindex and rankindex == playerrankindex then
-            if online then
-                _G["GuildFrameGuildStatusButton"..i.."Rank"]:SetTextColor(.5, 1, 1, 1)
-            else
-                _G["GuildFrameGuildStatusButton"..i.."Rank"]:SetTextColor(.5, 1, 1, .5)
-            end
+            _G["GuildFrameGuildStatusButton"..i.."Rank"]:SetTextColor(.5, 1, 1, online and 1 or 0.5)
+          else
+            _G["GuildFrameGuildStatusButton"..i.."Rank"]:SetTextColor(1, 1, 1, online and 1 or 0.5)
           end
         end
       end
