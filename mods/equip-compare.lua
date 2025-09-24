@@ -10,25 +10,6 @@ local module = ShaguTweaks:register({
 })
 
 module.enable = function()
-  local lastSearchName
-  local lastSearchID
-  -- cache previous result to avoid potentially
-  -- doing massive for loop on each frame
-  local function GetItemIDByName(name)
-    if not name then return nil end
-    if name ~= lastSearchName then
-      for itemID = 1, 99999 do
-        local itemName = GetItemInfo(itemID)
-        if (itemName and itemName == name) then
-          lastSearchID = itemID
-          break
-        end
-      end
-      lastSearchName = name
-    end
-    return lastSearchID
-  end
-
   -- hook tooltip methods to extract item ID
   local function HookTooltip(tooltip)
     local original_SetLootRollItem    = tooltip.SetLootRollItem
@@ -57,116 +38,99 @@ module.enable = function()
 
     function tooltip.SetLootRollItem(self, rollID)
       original_SetLootRollItem(self, rollID)
-      local _, _, id = strfind(GetLootRollItemLink(rollID) or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(GetLootRollItemLink(rollID))
     end
 
     function tooltip.SetLootItem(self, slot)
       original_SetLootItem(self, slot)
-      local _, _, id = strfind(GetLootSlotLink(slot) or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(GetLootSlotLink(slot))
     end
 
     function tooltip.SetMerchantItem(self, merchantIndex)
       original_SetMerchantItem(self, merchantIndex)
-      local _, _, id = strfind(GetMerchantItemLink(merchantIndex) or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(GetMerchantItemLink(merchantIndex))
     end
 
     function tooltip.SetQuestLogItem(self, itemType, index)
       original_SetQuestLogItem(self, itemType, index)
-      local _, _, id = strfind(GetQuestLogItemLink(itemType, index) or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(GetQuestLogItemLink(itemType, index))
     end
 
     function tooltip.SetQuestItem(self, itemType, index)
       original_SetQuestItem(self, itemType, index)
-      local _, _, id = strfind(GetQuestItemLink(itemType, index) or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(GetQuestItemLink(itemType, index))
     end
 
     function tooltip.SetHyperlink(self, arg1)
       original_SetHyperlink(self, arg1)
-      local _, _, id = strfind(arg1 or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(arg1)
     end
 
     function tooltip.SetBagItem(self, container, slot)
       local hasCooldown, repairCost = original_SetBagItem(self, container, slot)
-      local _, _, id = strfind(GetContainerItemLink(container, slot) or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(GetContainerItemLink(container, slot))
       return hasCooldown, repairCost
     end
 
     function tooltip.SetInboxItem(self, mailID, attachmentIndex)
       original_SetInboxItem(self, mailID, attachmentIndex)
-      local itemName = GetInboxItem(mailID)
-      self.itemID = GetItemIDByName(itemName)
+      self.itemID = ShaguTweaks.GetItemLinkByName(GetInboxItem(mailID))
     end
 
     function tooltip.SetInventoryItem(self, unit, slot)
       local hasItem, hasCooldown, repairCost = original_SetInventoryItem(self, unit, slot)
-      local _, _, id = strfind(GetInventoryItemLink(unit, slot) or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(GetInventoryItemLink(unit, slot))
       return hasItem, hasCooldown, repairCost
     end
 
     function tooltip.SetCraftItem(self, skill, slot)
       original_SetCraftItem(self, skill, slot)
-      local _, _, id = strfind(GetCraftReagentItemLink(skill, slot) or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(GetCraftReagentItemLink(skill, slot))
     end
 
     function tooltip.SetCraftSpell(self, slot)
       original_SetCraftSpell(self, slot)
-      local _, _, id = strfind(GetCraftItemLink(slot) or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(GetCraftItemLink(slot))
     end
 
     function tooltip.SetTradeSkillItem(self, skillIndex, reagentIndex)
       original_SetTradeSkillItem(self, skillIndex, reagentIndex)
       if reagentIndex then
-        local _, _, id = strfind(GetTradeSkillReagentItemLink(skillIndex, reagentIndex) or "", "item:(%d+)")
-        self.itemID = tonumber(id)
+        self.itemID = ShaguTweaks.GetItemIDFromLink(GetTradeSkillReagentItemLink(skillIndex, reagentIndex))
       else
-        local _, _, id = strfind(GetTradeSkillItemLink(skillIndex) or "", "item:(%d+)")
-        self.itemID = tonumber(id)
+        self.itemID = ShaguTweaks.GetItemIDFromLink(GetTradeSkillItemLink(skillIndex))
       end
     end
 
     function tooltip.SetAuctionItem(self, atype, index)
       original_SetAuctionItem(self, atype, index)
-	  local _, _, id = strfind(GetAuctionItemLink(atype, index) or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(GetAuctionItemLink(atype, index))
     end
 
     function tooltip.SetAuctionSellItem(self)
       original_SetAuctionSellItem(self)
-      local itemName = GetAuctionSellItemInfo()
-      self.itemID = GetItemIDByName(itemName)
+      self.itemID = ShaguTweaks.GetItemLinkByName(GetAuctionSellItemInfo())
     end
 
     function tooltip.SetTradePlayerItem(self, index)
       original_SetTradePlayerItem(self, index)
-      local _, _, id = strfind(GetTradePlayerItemLink(index) or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(GetTradePlayerItemLink(index))
     end
 
     function tooltip.SetTradeTargetItem(self, index)
       original_SetTradeTargetItem(self, index)
-      local _, _, id = strfind(GetTradeTargetItemLink(index) or "", "item:(%d+)")
-      self.itemID = tonumber(id)
+      self.itemID = ShaguTweaks.GetItemIDFromLink(GetTradeTargetItemLink(index))
     end
   end
 
   local wrapping_lines = {
-    ["^Set:"] = gsub("^"..ITEM_SET_BONUS, " %%s", ""),
-    ["^%(%d%) Set:"] = gsub(gsub(ITEM_SET_BONUS_GRAY, "%(%%d%)", "^%%(%%d%%)"), " %%s", ""),
-    ["^Effect:"] = gsub("^"..ITEM_SPELL_EFFECT, " %%s", ""),
+    ["^Set:"] = gsub("^"..ITEM_SET_BONUS, "%%s", ""),
+    ["^%(%d%) Set:"] = gsub(gsub(ITEM_SET_BONUS_GRAY, "%(%%d%)", "^%%(%%d%%)"), "%%s", ""),
+    ["^Effect:"] = gsub("^"..ITEM_SPELL_EFFECT, "%%s", ""),
     ["^Equip:"] = "^"..ITEM_SPELL_TRIGGER_ONEQUIP,
     ["^Chance on hit:"] = "^"..ITEM_SPELL_TRIGGER_ONPROC,
     ["^Use:"] = "^"..ITEM_SPELL_TRIGGER_ONUSE,
-    ["^\nRequires"] = "^\n"..gsub(ITEM_REQ_SKILL, " %%s", "")
+    ["^\nRequires"] = "^\n"..gsub(ITEM_REQ_SKILL, "%%s", "")
   }
 
   -- tooltip data cache
@@ -256,7 +220,7 @@ module.enable = function()
 
   local function SlotIndex(invtype)
     if not invtype_to_index[invtype] then return end
-    return unpack(invtype_to_index[invtype])
+    return invtype_to_index[invtype][1], invtype_to_index[invtype][2]
   end
 
   -- prevent tooltips from going off screen
