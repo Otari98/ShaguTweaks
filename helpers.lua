@@ -200,6 +200,7 @@ ShaguTweaks.strsplit = function(delimiter, subject)
 end
 
 ShaguTweaks.rgbhex = function(r, g, b, a)
+  local _r, _g, _b, _a
   if type(r) == "table" then
     if r.r then
       _r, _g, _b, _a = r.r, r.g, r.b, (r.a or 1)
@@ -372,7 +373,7 @@ ShaguTweaks.GetItemLinkByName = function(name)
     return itemLinkByNameCache[name]
   end
 
-  for itemID = 1, 25818 do
+  for itemID = 1, 99999 do
     local itemName, itemLink, itemQuality = GetItemInfo(itemID)
     if (itemName and itemName == name) then
       local _, _, _, hex = GetItemQualityColor(tonumber(itemQuality))
