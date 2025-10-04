@@ -372,13 +372,13 @@ libpredict.sender:SetScript("OnEvent", function()
       return
     end
 
-    local spell, heal = cmatch(arg1, HEALEDCRITSELFOTHER) -- "Your %s critically heals %s for %d."
+    local spell, _, heal = cmatch(arg1, HEALEDCRITSELFOTHER) -- "Your %s critically heals %s for %d."
     if spell and heal then
       if spell == spell_queue[1] then UpdateCache(spell_queue[2], heal, true) end
       return
     end
 
-    local spell, _, heal = cmatch(arg1, HEALEDCRITSELFSELF) -- "Your %s critically heals you for %d."
+    local spell, heal = cmatch(arg1, HEALEDCRITSELFSELF) -- "Your %s critically heals you for %d."
     if spell and heal then
       if spell == spell_queue[1] then UpdateCache(spell_queue[2], heal, true) end
       return
