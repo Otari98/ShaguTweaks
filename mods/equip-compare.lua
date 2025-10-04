@@ -33,6 +33,8 @@ module.enable = function()
 
     tooltip:SetScript("OnHide", function()
       if original_OnHide then original_OnHide() end
+      ShoppingTooltip1:Hide()
+      ShoppingTooltip2:Hide()
       this.itemID = nil
     end)
 
