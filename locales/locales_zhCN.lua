@@ -133,6 +133,7 @@ ShaguTweaks_locale["zhCN"]["judgements"] = {
   ["圣光审判"] = true,
   ["智慧审判"] = true,
   ["十字军审判"] = true,
+  ["十字军打击"] = true,
 }
 
 ShaguTweaks_locale["zhCN"]["interrupts"] = {
@@ -728,6 +729,7 @@ ShaguTweaks_locale["zhCN"]["spells"] = {
   ['强力驱散']={t=4000,icon='Spell_Arcane_StarFire'},
   ['强化宠物']={t=500,icon='Spell_Shadow_DeathPact'},
   ['强效治疗术']={t=3000,icon='Spell_Holy_GreaterHeal'},
+  ['强力治疗术']={t=4000,icon='Spell_Holy_Heal02'},
   ['强效隐形']={t=3000,icon='Spell_Nature_Invisibilty'},
   ['德鲁伊的睡眠']={t=2500,icon='Spell_Nature_Sleep'},
   ['心灵占卜']={t=5000,icon='Spell_Holy_Restoration'},
@@ -1436,6 +1438,25 @@ ShaguTweaks_locale["zhCN"]["spells"] = {
   ['黑马']={t=3000,icon='Ability_Mount_NightmareHorse'},
   ['龙灵采集器900型']={t=2000,icon='Temp'},
   ['龙翼攻击']={t=1000,icon='INV_Misc_MonsterScales_14'},
+  ['冰霜箭']={t=3000,icon='Spell_Frost_FrostBolt02'},
+  ['梦境']={t=500,icon='Spell_Nature_Sleep'},
+  ['龙族毒液']={t=1000,icon='Spell_Nature_CorrosiveBreath'},
+  ['腐蚀箭']={t=2000,icon='Spell_Nature_CorrosiveBreath'},
+  ['仆人的诅咒']={t=1500,icon='Spell_Shadow_ShadowPact'},
+  ['巢毒齐射']={t=1500,icon='Spell_Nature_CorrosiveBreath'},
+  ['灵魂交换']={t=500,icon='Spell_Shadow_CurseOfMannoroth'},
+  ['掠夺者风暴']={t=1500,icon='INV_Spear_05'},
+  ['召唤幽灵骏马']={t=1000,icon='Ability_Mount_Undeadhorse'},
+  ['布莱克沃尔兹的恩赐']={t=1500,icon='Spell_Nature_Drowsy'},
+  ['布莱克沃尔德的祝福']={t=500,icon='Spell_Shadow_Requiem'},
+  ['暗箭']={t=3000,icon='Spell_Shadow_ShadowBolt'},
+  ['暗影赋能']={t=2500,icon='Spell_Holy_RemoveCurse'},
+  ['格雷尔法尔']={t=6000,icon='Spell_Holy_SearingLight'},
+  ['格雷尔之火']={t=6000,icon='Spell_Holy_SearingLight'},
+  ['格雷尔金治愈']={t=2500,icon='Spell_Shadow_ChillTouch'},
+  ['格雷尔金火雨']={t=3000,icon='Spell_Shadow_RainOfFire'},
+  ['格雷尔金火球']={t=1500,icon='Spell_Fire_FlameBolt'},
+  ['月之转换']={t=5000,icon='Spell_Fire_FlameBolt'},
 }
 
 ShaguTweaks_locale["zhCN"]["debuffs"] = {
